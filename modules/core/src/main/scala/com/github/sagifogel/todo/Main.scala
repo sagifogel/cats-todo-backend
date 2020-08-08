@@ -2,8 +2,9 @@ package com.github.sagifogel.todo
 
 import cats.effect._
 import cats.implicits._
-import com.github.sagifogel.todo.algebras.LiveTodoRepository
+import com.github.sagifogel.todo.repository.LiveTodoRepository
 import com.github.sagifogel.todo.config.Config
+import com.github.sagifogel.todo.db.Database
 import com.github.sagifogel.todo.modules.HttpApi
 import io.chrisdavenport.log4cats.{Logger, SelfAwareStructuredLogger}
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
@@ -18,10 +19,11 @@ object Main extends IOApp {
         AppResources.make[IO](cfg).use {
           res =>
             for {
-              todoRepo <- LiveTodoRepository.make[IO](res.psql)
+              _ <- Database.initialize(res.database)
+              todoRepo <- LiveTodoRepository.make[IO](res.database)
               api <- HttpApi.make[IO](todoRepo)
               _ <- BlazeServerBuilder[IO]
-                .bindHttp(cfg.httpServerConfig.port.value, cfg.httpServerConfig.host.value)
+                .bindHttp(cfg.server.port, cfg.server.host)
                 .withHttpApp(api.httpApp)
                 .serve
                 .compile

@@ -13,7 +13,7 @@ lazy val root = (project in file("."))
 lazy val core = (project in file("modules/core"))
   .settings(
     name := "cats-todo-backend-core",
-    scalacOptions += "-Ymacro-annotations",
+    scalacOptions ++= Seq("-Ymacro-annotations", "-language:postfixOps"),
     scalafmtOnCompile := true,
     resolvers += Resolver.sonatypeRepo("snapshots"),
     libraryDependencies ++= Seq(
@@ -22,25 +22,25 @@ lazy val core = (project in file("modules/core"))
       Libraries.cats,
       Libraries.catsEffect,
       Libraries.catsMeowMtl,
-      Libraries.catsRetry,
       Libraries.circeCore,
       Libraries.circeGeneric,
       Libraries.circeParser,
       Libraries.circeRefined,
       Libraries.circeConfigAll,
-      Libraries.fs2,
       Libraries.http4sDsl,
       Libraries.http4sServer,
       Libraries.http4sClient,
       Libraries.http4sCirce,
       Libraries.log4cats,
       Libraries.logback % Runtime,
-      Libraries.newtype,
       Libraries.refinedCore,
-      Libraries.refinedCats,
-      Libraries.skunkCore,
-      Libraries.skunkCirce,
-      Libraries.squants
+      Libraries.h2,
+      Libraries.flyway,
+      Libraries.doobieCore,
+      Libraries.doobieRefined,
+      Libraries.doobieHikari,
+      Libraries.doobieH2,
+      Libraries.doobiePostgres
     )
   )
 

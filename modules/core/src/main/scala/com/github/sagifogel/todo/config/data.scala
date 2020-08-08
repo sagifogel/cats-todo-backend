@@ -1,19 +1,15 @@
 package com.github.sagifogel.todo.config
 
-import eu.timepit.refined.types.net.UserPortNumber
-import eu.timepit.refined.types.numeric.PosInt
-import eu.timepit.refined.types.string.NonEmptyString
-
 import scala.concurrent.duration.FiniteDuration
 
 object data {
 
-  case class AppConfig(httpClientConfig: HttpClientConfig, postgreSQL: PostgreSQLConfig, httpServerConfig: HttpServerConfig)
+  case class AppSettings(client: HttpClientSettings, database: DatabaseSettings, server: HttpServerSettings)
 
-  case class PostgreSQLConfig(host: NonEmptyString, port: UserPortNumber, user: NonEmptyString, database: NonEmptyString, max: PosInt)
+  case class DatabaseSettings(driver: String, url: String, user: String, password: String, threadPoolSize: Int)
 
-  case class HttpServerConfig(host: NonEmptyString, port: UserPortNumber)
+  case class HttpServerSettings(host: String, port: Int)
 
-  case class HttpClientConfig(connectTimeout: FiniteDuration, requestTimeout: FiniteDuration)
+  case class HttpClientSettings(connectTimeout: FiniteDuration, requestTimeout: FiniteDuration)
 
 }

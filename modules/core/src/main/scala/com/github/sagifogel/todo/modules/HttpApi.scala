@@ -1,7 +1,7 @@
 package com.github.sagifogel.todo.modules
 
 import cats.effect.{Concurrent, Sync, Timer}
-import com.github.sagifogel.todo.algebras.TodoRepository
+import com.github.sagifogel.todo.repository.TodoRepository
 import com.github.sagifogel.todo.http.{TodoRoutes, version}
 import org.http4s.{HttpApp, HttpRoutes}
 import org.http4s.server.Router
