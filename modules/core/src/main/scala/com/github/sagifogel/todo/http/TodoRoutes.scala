@@ -10,19 +10,19 @@ import io.circe.syntax._
 import io.circe.generic.auto._
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
-import org.http4s.headers.{Location, `Content-Type`}
+import org.http4s.headers.{`Content-Type`, Location}
 import org.http4s.server.Router
 import org.http4s.{HttpRoutes, MediaType, Response, Uri}
 import Function.const
 
-final class TodoRoutes[F[_] : Defer : ThrowableMonad : JsonDecoder](repository: TodoRepository[F]) extends Http4sDsl[F] {
+final class TodoRoutes[F[_]: Defer: ThrowableMonad: JsonDecoder](repository: TodoRepository[F]) extends Http4sDsl[F] {
   private[http] val prefixPath = "/todos"
 
   val httpRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
     case GET -> Root =>
       Ok(Stream("[") ++ repository.list.map(_.asJson.noSpaces).intersperse(",") ++ Stream("]"), `Content-Type`(MediaType.application.json))
 
-    case req@POST -> Root =>
+    case req @ POST -> Root =>
       req.asJsonDecode[Todo].flatMap { todo =>
         for {
           createdTodo <- repository.create(todo)
@@ -30,7 +30,7 @@ final class TodoRoutes[F[_] : Defer : ThrowableMonad : JsonDecoder](repository: 
         } yield response
       }
 
-    case req@PUT -> Root / UUIDVar(id) =>
+    case req @ PUT -> Root / UUIDVar(id) =>
       req.asJsonDecode[Todo].flatMap { todo =>
         for {
           result <- repository.update(id, todo)
@@ -40,13 +40,13 @@ final class TodoRoutes[F[_] : Defer : ThrowableMonad : JsonDecoder](repository: 
 
     case PUT -> Root / UUIDVar(id) / "done" =>
       repository.done(id).flatMap {
-        case Right(_) => NoContent()
+        case Right(_)                => NoContent()
         case Left(TodoNotFoundError) => NotFound()
       }
 
     case DELETE -> Root / UUIDVar(id) =>
       repository.delete(id).flatMap {
-        case Right(_) => NoContent()
+        case Right(_)                => NoContent()
         case Left(TodoNotFoundError) => NotFound()
       }
 
@@ -58,11 +58,9 @@ final class TodoRoutes[F[_] : Defer : ThrowableMonad : JsonDecoder](repository: 
     prefixPath -> httpRoutes
   )
 
-  private def todoResult(result: Either[TodoNotFoundError.type, Todo]): F[Response[F]] = {
+  private def todoResult(result: Either[TodoNotFoundError.type, Todo]): F[Response[F]] =
     result match {
-      case Right(todo) => Ok(todo.asJson)
+      case Right(todo)             => Ok(todo.asJson)
       case Left(TodoNotFoundError) => NotFound()
     }
-  }
 }
-

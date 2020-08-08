@@ -44,3 +44,21 @@ lazy val core = (project in file("modules/core"))
     )
   )
 
+lazy val tests = (project in file("modules/tests"))
+  .configs(IntegrationTest)
+  .settings(
+    name := "shopping-cart-test-suite",
+    scalacOptions ++= Seq("-Ymacro-annotations", "-language:postfixOps"),
+    scalafmtOnCompile := true,
+    Defaults.itSettings,
+    libraryDependencies ++= Seq(
+      compilerPlugin(Libraries.kindProjector cross CrossVersion.full),
+      compilerPlugin(Libraries.betterMonadicFor),
+      Libraries.circeLiteral,
+      Libraries.scalaCheck,
+      Libraries.scalaTest,
+      Libraries.scalaTestPlus
+    )
+  )
+  .dependsOn(core)
+

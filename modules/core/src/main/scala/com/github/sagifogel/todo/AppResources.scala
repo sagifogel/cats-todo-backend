@@ -14,8 +14,8 @@ import scala.concurrent.ExecutionContext
 final case class AppResources[F[_]](client: Client[F], database: HikariTransactor[F])
 
 object AppResources {
-  def make[F[_] : ConcurrentEffect : ContextShift : Logger](cfg: AppSettings): Resource[F, AppResources[F]] = {
-    def mkDatabaseResource(config: DatabaseSettings): Resource[F, HikariTransactor[F]] = {
+  def make[F[_]: ConcurrentEffect: ContextShift: Logger](cfg: AppSettings): Resource[F, AppResources[F]] = {
+    def mkDatabaseResource(config: DatabaseSettings): Resource[F, HikariTransactor[F]] =
       for {
         ec <- ExecutionContexts.fixedThreadPool[F](config.threadPoolSize)
         blocker <- Blocker[F]
@@ -28,7 +28,6 @@ object AppResources {
           blocker
         )
       } yield transactor
-    }
 
     def mkHttpClient(config: HttpClientSettings): Resource[F, Client[F]] =
       BlazeClientBuilder[F](ExecutionContext.global)

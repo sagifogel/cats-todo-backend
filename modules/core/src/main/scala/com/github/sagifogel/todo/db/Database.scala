@@ -6,7 +6,7 @@ import doobie.hikari.HikariTransactor
 import org.flywaydb.core.Flyway
 
 object Database {
-  def initialize[F[_] : Sync : Applicative](transactor: HikariTransactor[F]): F[Unit] = {
+  def initialize[F[_]: Sync: Applicative](transactor: HikariTransactor[F]): F[Unit] =
     transactor.configure { dataSource =>
       Applicative[F].pure {
         val flyWay = Flyway.configure().dataSource(dataSource).load()
@@ -14,5 +14,4 @@ object Database {
         ()
       }
     }
-  }
 }

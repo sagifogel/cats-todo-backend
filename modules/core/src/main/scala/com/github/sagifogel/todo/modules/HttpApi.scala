@@ -2,7 +2,7 @@ package com.github.sagifogel.todo.modules
 
 import cats.effect.{Concurrent, Sync, Timer}
 import com.github.sagifogel.todo.repository.TodoRepository
-import com.github.sagifogel.todo.http.{TodoRoutes, version}
+import com.github.sagifogel.todo.http.{version, TodoRoutes}
 import org.http4s.{HttpApp, HttpRoutes}
 import org.http4s.server.Router
 import org.http4s.implicits._
@@ -11,11 +11,11 @@ import org.http4s.server.middleware.{AutoSlash, CORS, RequestLogger, ResponseLog
 import concurrent.duration._
 
 object HttpApi {
-  def make[F[_] : Concurrent : Timer](todoRepo: TodoRepository[F]): F[HttpApi[F]] =
+  def make[F[_]: Concurrent: Timer](todoRepo: TodoRepository[F]): F[HttpApi[F]] =
     Sync[F].delay(new HttpApi[F](todoRepo))
 }
 
-final class HttpApi[F[_] : Concurrent : Timer] private(todoRepo: TodoRepository[F]) {
+final class HttpApi[F[_]: Concurrent: Timer] private (todoRepo: TodoRepository[F]) {
   private val todoRoutes = new TodoRoutes[F](todoRepo).routes
 
   private val middleware: HttpRoutes[F] => HttpRoutes[F] = {
