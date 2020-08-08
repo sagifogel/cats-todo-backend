@@ -2,7 +2,7 @@
 
 Todo-Backend implementation using cats, http4s and circe
 
-A sample project of a microservice using cats, http4s, doobie and circe.
+A sample project of a microservice using [cats](https://typelevel.org/cats/), [http4s](https://http4s.org/), [doobie](http://tpolecat.github.io/doobie/) and [circe](https://circe.github.io/circe/).
 
 The microservice allows CRUD of todo items with a description and enables the option to mark todo as done.
 
