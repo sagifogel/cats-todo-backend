@@ -20,7 +20,7 @@ microservice is lost.
 
 ### Running:
 
-- Via sbt: sbt run
+- Via sbt: `sbt "project core" run`
 - Via IDEA: 
     - Load the project
     - Refresh sbt dependencies

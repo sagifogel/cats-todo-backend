@@ -8,6 +8,7 @@ import com.github.sagifogel.todo.domain.todo.Todo
 import com.github.sagifogel.todo.repository.LiveTodoRepository
 import com.github.sagifogel.todo.tests.suite.{IOAssertion, ResourceSuite}
 import doobie.hikari.HikariTransactor
+import com.github.sagifogel.todo.tests.suite.Arbitraries._
 
 import Function.const
 
