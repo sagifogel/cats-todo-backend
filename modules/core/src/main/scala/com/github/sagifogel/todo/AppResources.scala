@@ -14,27 +14,26 @@ import scala.concurrent.ExecutionContext
 final case class AppResources[F[_]](client: Client[F], database: HikariTransactor[F])
 
 object AppResources {
-  def make[F[_]: ConcurrentEffect: ContextShift: Logger](cfg: AppSettings): Resource[F, AppResources[F]] = {
-    def mkDatabaseResource(config: DatabaseSettings): Resource[F, HikariTransactor[F]] =
-      for {
-        ec <- ExecutionContexts.fixedThreadPool[F](config.threadPoolSize)
-        blocker <- Blocker[F]
-        transactor <- HikariTransactor.newHikariTransactor[F](
-          config.driver,
-          config.url,
-          config.user,
-          config.password,
-          ec,
-          blocker
-        )
-      } yield transactor
-
-    def mkHttpClient(config: HttpClientSettings): Resource[F, Client[F]] =
-      BlazeClientBuilder[F](ExecutionContext.global)
-        .withConnectTimeout(config.connectTimeout)
-        .withRequestTimeout(config.requestTimeout)
-        .resource
-
+  def make[F[_]: ConcurrentEffect: ContextShift: Logger](cfg: AppSettings): Resource[F, AppResources[F]] =
     (mkHttpClient(cfg.client), mkDatabaseResource(cfg.database)).mapN(AppResources.apply[F])
-  }
+
+  private[todo] def mkHttpClient[F[_]: ConcurrentEffect: ContextShift: Logger](config: HttpClientSettings): Resource[F, Client[F]] =
+    BlazeClientBuilder[F](ExecutionContext.global)
+      .withConnectTimeout(config.connectTimeout)
+      .withRequestTimeout(config.requestTimeout)
+      .resource
+
+  def mkDatabaseResource[F[_]: ConcurrentEffect: ContextShift](config: DatabaseSettings): Resource[F, HikariTransactor[F]] =
+    for {
+      ec <- ExecutionContexts.fixedThreadPool[F](config.threadPoolSize)
+      blocker <- Blocker[F]
+      transactor <- HikariTransactor.newHikariTransactor[F](
+        config.driver,
+        config.url,
+        config.user,
+        config.password,
+        ec,
+        blocker
+      )
+    } yield transactor
 }

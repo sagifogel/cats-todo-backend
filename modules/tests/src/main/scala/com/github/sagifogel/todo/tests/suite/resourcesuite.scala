@@ -1,4 +1,4 @@
-package suite
+package com.github.sagifogel.todo.tests.suite
 
 import cats.effect._
 import cats.effect.concurrent.Deferred

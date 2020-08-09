@@ -1,4 +1,4 @@
-package todo.http
+package com.github.sagifogel.todo.tests.pt
 
 import java.util.UUID
 
@@ -8,13 +8,13 @@ import com.github.sagifogel.todo.config.Config
 import com.github.sagifogel.todo.domain.todo.{Todo, TodoNotFoundError}
 import com.github.sagifogel.todo.http.TodoRoutes
 import com.github.sagifogel.todo.repository.TodoRepository
+import com.github.sagifogel.todo.tests.suite.{HttpTestSuite, IOAssertion}
 import fs2.Stream
 import io.circe.generic.auto._
 import io.circe.literal._
 import org.http4s.circe._
 import org.http4s.{Method, Request, Status, Uri}
-import suite.{HttpTestSuite, IOAssertion}
-import todo.Arbitraries._
+import com.github.sagifogel.todo.tests.suite.Arbitraries._
 
 class RoutesSpec extends HttpTestSuite {
   private val configFile = "test.conf"
@@ -79,7 +79,9 @@ class RoutesSpec extends HttpTestSuite {
     }
   }
 
-  protected class InMemoryTodoRepository(ls: List[Todo] = List.empty, opId: Option[UUID] = None) extends TodoRepository[IO] {
+  protected class InMemoryTodoRepository(ls: List[Todo] = List.empty, opId: Option[UUID] = None, tudu: Todo = Todo(None, "", false)) extends TodoRepository[IO] {
+    override def get(id: UUID): IO[Either[TodoNotFoundError.type, Todo]] = IO.pure(Right(tudu.copy(id = id.some)))
+
     override def list: Stream[IO, Todo] = Stream[IO, Todo](ls: _*)
 
     override def create(todo: Todo): IO[Todo] = IO.pure(todo.copy(id = opId))

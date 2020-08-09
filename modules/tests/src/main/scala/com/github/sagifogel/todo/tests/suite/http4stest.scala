@@ -1,10 +1,11 @@
-package suite
+package com.github.sagifogel.todo.tests.suite
 
 import cats.effect.IO
 import io.circe._
 import io.circe.syntax._
 import org.http4s._
 import org.http4s.circe._
+
 import scala.util.control.NoStackTrace
 
 trait HttpTestSuite extends PureTestSuite {

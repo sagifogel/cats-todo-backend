@@ -15,6 +15,8 @@ import fs2.Stream
 import scala.Function.const
 
 trait TodoRepository[F[_]] {
+  def get(id: UUID): F[Either[TodoNotFoundError.type, Todo]]
+
   def list: Stream[F, Todo]
 
   def create(todo: Todo): F[Todo]
@@ -34,6 +36,16 @@ object LiveTodoRepository {
 }
 
 final class LiveTodoRepository[F[_]: ThrowableBracket](transactor: HikariTransactor[F]) extends TodoRepository[F] {
+  def get(id: UUID): F[Either[TodoNotFoundError.type, Todo]] =
+    Sql
+      .get(id)
+      .option
+      .map {
+        case Some(todo) => Right(todo)
+        case None       => Left(TodoNotFoundError)
+      }
+      .transact(transactor)
+
   override def list: Stream[F, Todo] =
     Sql.list.stream.transact(transactor)
 

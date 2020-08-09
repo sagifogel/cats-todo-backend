@@ -1,4 +1,4 @@
-package todo
+package com.github.sagifogel.todo.tests.suite
 
 import com.github.sagifogel.todo.domain.todo.Todo
 import org.scalacheck.Arbitrary

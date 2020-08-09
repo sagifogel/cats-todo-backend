@@ -8,16 +8,21 @@ import doobie.implicits._
 import doobie.postgres.implicits._
 
 object Sql {
-  def create(id: UUID, todo: Todo): Update0 =
+  def get(id: UUID): Query0[Todo] =
     sql"""
-      INSERT INTO TODOS (id, description, completed)
-      VALUES ($id, ${todo.description}, ${todo.completed})
-      """.update
+      SELECT * FROM TODOS WHERE id = $id
+      """.query[Todo]
 
   val list: Query0[Todo] =
     sql"""
       SELECT * FROM TODOS
       """.query[Todo]
+
+  def create(id: UUID, todo: Todo): Update0 =
+    sql"""
+      INSERT INTO TODOS (id, description, completed)
+      VALUES ($id, ${todo.description}, ${todo.completed})
+      """.update
 
   def update(id: UUID, todo: Todo): Update0 =
     sql"""

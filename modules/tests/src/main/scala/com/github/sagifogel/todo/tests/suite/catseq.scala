@@ -1,9 +1,8 @@
-package suite
+package com.github.sagifogel.todo.tests.suite
 
 import cats.Eq
+import org.scalactic.TripleEqualsSupport.{AToBEquivalenceConstraint, BToAEquivalenceConstraint}
 import org.scalactic._
-import org.scalactic.TripleEqualsSupport.AToBEquivalenceConstraint
-import org.scalactic.TripleEqualsSupport.BToAEquivalenceConstraint
 
 // Credits to the original implementation: https://github.com/bvenners/equality-integration-demo
 final class CatsEquivalence[A](ev: Eq[A]) extends Equivalence[A] {
