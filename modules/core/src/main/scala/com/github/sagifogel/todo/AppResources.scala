@@ -11,17 +11,11 @@ import org.http4s.client.blaze.BlazeClientBuilder
 
 import scala.concurrent.ExecutionContext
 
-final case class AppResources[F[_]](client: Client[F], database: HikariTransactor[F])
+final case class AppResources[F[_]](database: HikariTransactor[F])
 
 object AppResources {
   def make[F[_]: ConcurrentEffect: ContextShift: Logger](cfg: AppSettings): Resource[F, AppResources[F]] =
-    (mkHttpClient(cfg.client), mkDatabaseResource(cfg.database)).mapN(AppResources.apply[F])
-
-  private[todo] def mkHttpClient[F[_]: ConcurrentEffect: ContextShift: Logger](config: HttpClientSettings): Resource[F, Client[F]] =
-    BlazeClientBuilder[F](ExecutionContext.global)
-      .withConnectTimeout(config.connectTimeout)
-      .withRequestTimeout(config.requestTimeout)
-      .resource
+    mkDatabaseResource(cfg.database).map(AppResources.apply[F])
 
   def mkDatabaseResource[F[_]: ConcurrentEffect: ContextShift](config: DatabaseSettings): Resource[F, HikariTransactor[F]] =
     for {
